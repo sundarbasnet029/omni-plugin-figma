@@ -10,6 +10,7 @@
     "figma"
   ],
   "ui": "dist/index.html",
+ 
   "networkAccess": {
     "allowedDomains": [
       "none"

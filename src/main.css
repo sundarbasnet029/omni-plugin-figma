@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
+
+@theme {
+  --font-family-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
+}
+
+
+* {
+  font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+}
