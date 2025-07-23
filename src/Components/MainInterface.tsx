@@ -3,13 +3,16 @@ import {TabBar} from './TabBar';
 import {IconsView} from './IconsView';
 import {ImagesView} from './ImageView';
 import {ContentView} from './ContentView';
+import { fetchUnsplashImages } from '../API/unsplash';
 
 // Define TabType type if not already defined elsewhere
 type TabType = 'icons' | 'image' | 'content';
 
 const MainInterface: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('icons');
-
+  if(activeTab === 'image'){
+    fetchUnsplashImages();
+  }
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
   };
