@@ -14,26 +14,20 @@ figma.showUI(__html__, {width:440, height:554});
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
-figma.ui.onmessage =  (msg: {type: string, count: number}) => {
-  // One way of distinguishing between different types of messages sent from
-  // your HTML page is to use an object with a "type" property like this.
-  if (msg.type === 'create-shapes') {
-    // This plugin creates rectangles on the screen.
-    const numberOfRectangles = msg.count;
+figma.ui.onmessage = async (msg) => {
+  if (msg.type === 'insert-names') {
+    const selectedNodes = figma.currentPage.selection;
+    const names: string[] = msg.names;
 
-    const nodes: SceneNode[] = [];
-    for (let i = 0; i < numberOfRectangles; i++) {
-      const rect = figma.createRectangle();
-      rect.x = i * 150;
-      rect.fills = [{ type: 'SOLID', color: { r: 1, g: 0.5, b: 0 } }];
-      figma.currentPage.appendChild(rect);
-      nodes.push(rect);
+    let count = 0;
+    for (let node of selectedNodes) {
+      if (node.type === "TEXT") {
+        await figma.loadFontAsync(node.fontName as FontName);
+        node.characters = names[count % names.length];
+        count++;
+      }
     }
-    figma.currentPage.selection = nodes;
-    figma.viewport.scrollAndZoomIntoView(nodes);
-  }
 
-  // Make sure to close the plugin when you're done. Otherwise the plugin will
-  // keep running, which shows the cancel button at the bottom of the screen.
-  figma.closePlugin();
+    figma.closePlugin(`Inserted ${count} name(s)`);
+  }
 };

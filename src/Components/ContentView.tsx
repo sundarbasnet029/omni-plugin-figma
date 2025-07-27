@@ -1,21 +1,104 @@
 
 import React, { useState } from 'react';
 import { Search,  ChevronRight, ChevronDown } from 'lucide-react';
+import {insertName} from "../ContentFunctions/insertFunctions.js";
 
 export const ContentView: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [contentType, setContentType] = useState('all');
 
   const contentItems = [
-    { icon: '👤', title: 'Avatar', subtitle: 'Random images', type: 'data', hasChevron: true },
-    { icon: '👤', title: 'Name(Full name)', subtitle: 'eg: John Doe', type: 'data', hasChevron: true },
-    { icon: '✉️', title: 'Email', subtitle: 'example@email.com', type: 'data', hasChevron: true, hasIndicator: true },
-    { icon: '📞', title: 'Phone(US)', subtitle: '(650) 253-2524', type: 'data', hasChevron: true },
-    { icon: '📄', title: 'Lorem ipsum', subtitle: 'Random Text', type: 'text', hasChevron: true },
-    { icon: '📅', title: 'Date(mm/dd/yyyy)', subtitle: '09/24/2025', type: 'data', hasChevron: true },
-    { icon: '🕒', title: 'Time', subtitle: '2 hrs ago', type: 'data', hasChevron: true },
-    { icon: '💰', title: 'Currency(US)', subtitle: '', type: 'data', hasChevron: true }
+    {
+      icon: '👤',
+      title: 'Avatar',
+      subtitle: 'Random images',
+      type: 'data',
+      hasChevron: true,
+      onClick: () => {
+        console.log("Avatar clicked");
+        // add your Avatar logic here
+      },
+    },
+    {
+      icon: '👤',
+      title: 'Name(Full name)',
+      subtitle: 'eg: John Doe',
+      type: 'data',
+      hasChevron: true,
+      onClick: () => {
+        console.log("Name clicked");
+        insertName();
+      },
+    },
+    {
+      icon: '✉️',
+      title: 'Email',
+      subtitle: 'example@email.com',
+      type: 'data',
+      hasChevron: true,
+      hasIndicator: true,
+      onClick: () => {
+        console.log("Email clicked");
+        // add your Email logic here
+      },
+    },
+    {
+      icon: '📞',
+      title: 'Phone(US)',
+      subtitle: '(650) 253-2524',
+      type: 'data',
+      hasChevron: true,
+      onClick: () => {
+        console.log("Phone clicked");
+        // add your Phone logic here
+      },
+    },
+    {
+      icon: '📄',
+      title: 'Lorem ipsum',
+      subtitle: 'Random Text',
+      type: 'text',
+      hasChevron: true,
+      onClick: () => {
+        console.log("Lorem Ipsum clicked");
+        // add your lorem logic here
+      },
+    },
+    {
+      icon: '📅',
+      title: 'Date(mm/dd/yyyy)',
+      subtitle: '09/24/2025',
+      type: 'data',
+      hasChevron: true,
+      onClick: () => {
+        console.log("Date clicked");
+        // add your date logic here
+      },
+    },
+    {
+      icon: '🕒',
+      title: 'Time',
+      subtitle: '2 hrs ago',
+      type: 'data',
+      hasChevron: true,
+      onClick: () => {
+        console.log("Time clicked");
+        // add your time logic here
+      },
+    },
+    {
+      icon: '💰',
+      title: 'Currency(US)',
+      subtitle: '',
+      type: 'data',
+      hasChevron: true,
+      onClick: () => {
+        console.log("Currency clicked");
+        // add your currency logic here
+      },
+    },
   ];
+  
 
   const filteredContent = contentItems.filter(item => {
     const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -54,32 +137,34 @@ export const ContentView: React.FC = () => {
       {/* Content List */}
       <div className="flex-1 p-4 overflow-auto">
         <div className="space-y-1">
-          {filteredContent.map((item, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer rounded-lg transition-colors"
+        {filteredContent.map((item, index) => (
+         <div
+            key={index}
+            className="flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer rounded-lg transition-colors"
+            onClick={item.onClick}
             >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm">
-                  {item.icon}
+                {item.icon}
                 </div>
                 <div>
-                  <div className="font-medium text-gray-900 text-sm">{item.title}</div>
-                  {item.subtitle && (
-                    <div className="text-xs text-gray-500">{item.subtitle}</div>
-                  )}
+                <div className="font-medium text-gray-900 text-sm">{item.title}</div>
+                {item.subtitle && (
+                <div className="text-xs text-gray-500">{item.subtitle}</div>
+                )}
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                {item.hasIndicator && (
-                  <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
-                )}
-                {item.hasChevron && (
-                  <ChevronRight size={16} className="text-gray-400" />
-                )}
-              </div>
+            <div className="flex items-center gap-2">
+            {item.hasIndicator && (
+            <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
+            )}
+            {item.hasChevron && (
+            <ChevronRight size={16} className="text-gray-400" />
+            )}
             </div>
-          ))}
+            </div>
+        ))}
+
         </div>
         {filteredContent.length === 0 && (
           <div className="text-center text-gray-500 mt-8">
