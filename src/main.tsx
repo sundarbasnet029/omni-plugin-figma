@@ -4,6 +4,6 @@ import MainInterface from './Components/MainInterface';
 
 createRoot(document.getElementById('root')!).render(
 <>
-  <MainInterface/>
+<MainInterface/>
     </>
 )
