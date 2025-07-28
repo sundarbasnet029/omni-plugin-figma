@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Search,  ChevronRight, ChevronDown } from 'lucide-react';
-import {insertName} from "../ContentFunctions/insertFunctions.js";
+import { insertContent } from '../ContentFunctions/insertFunctions';
 
 export const ContentView: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -10,10 +10,11 @@ export const ContentView: React.FC = () => {
   const contentItems = [
     {
       icon: '👤',
+      role: 'avatar',
       title: 'Avatar',
       subtitle: 'Random images',
       type: 'data',
-      hasChevron: true,
+      hasChevron: false,
       onClick: () => {
         console.log("Avatar clicked");
         // add your Avatar logic here
@@ -24,10 +25,10 @@ export const ContentView: React.FC = () => {
       title: 'Name(Full name)',
       subtitle: 'eg: John Doe',
       type: 'data',
-      hasChevron: true,
+      hasChevron: false,
       onClick: () => {
         console.log("Name clicked");
-        insertName();
+        insertContent("name");
       },
     },
     {
@@ -35,11 +36,11 @@ export const ContentView: React.FC = () => {
       title: 'Email',
       subtitle: 'example@email.com',
       type: 'data',
-      hasChevron: true,
-      hasIndicator: true,
+      hasChevron: false,
+      hasIndicator: false,
       onClick: () => {
         console.log("Email clicked");
-        // add your Email logic here
+        insertContent("email");
       },
     },
     {
@@ -47,10 +48,10 @@ export const ContentView: React.FC = () => {
       title: 'Phone(US)',
       subtitle: '(650) 253-2524',
       type: 'data',
-      hasChevron: true,
+      hasChevron: false,
       onClick: () => {
         console.log("Phone clicked");
-        // add your Phone logic here
+        insertContent("number");
       },
     },
     {
@@ -58,9 +59,10 @@ export const ContentView: React.FC = () => {
       title: 'Lorem ipsum',
       subtitle: 'Random Text',
       type: 'text',
-      hasChevron: true,
+      hasChevron: false,
       onClick: () => {
         console.log("Lorem Ipsum clicked");
+        insertContent("loremIpsum");
         // add your lorem logic here
       },
     },
@@ -69,9 +71,10 @@ export const ContentView: React.FC = () => {
       title: 'Date(mm/dd/yyyy)',
       subtitle: '09/24/2025',
       type: 'data',
-      hasChevron: true,
+      hasChevron: false,
       onClick: () => {
         console.log("Date clicked");
+        insertContent("date");
         // add your date logic here
       },
     },
@@ -80,9 +83,10 @@ export const ContentView: React.FC = () => {
       title: 'Time',
       subtitle: '2 hrs ago',
       type: 'data',
-      hasChevron: true,
+      hasChevron: false,
       onClick: () => {
         console.log("Time clicked");
+        insertContent("time");
         // add your time logic here
       },
     },
@@ -91,10 +95,11 @@ export const ContentView: React.FC = () => {
       title: 'Currency(US)',
       subtitle: '',
       type: 'data',
-      hasChevron: true,
+      hasChevron: false,
       onClick: () => {
         console.log("Currency clicked");
         // add your currency logic here
+        insertContent("price");
       },
     },
   ];
@@ -135,12 +140,12 @@ export const ContentView: React.FC = () => {
       </div>
 
       {/* Content List */}
-      <div className="flex-1 p-4 overflow-auto">
-        <div className="space-y-1">
+      <div className="flex-1 p-3 overflow-auto">
+        <div className="space-y-0">
         {filteredContent.map((item, index) => (
          <div
             key={index}
-            className="flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer rounded-lg transition-colors"
+            className="flex items-center justify-between px-3 py-2 hover:bg-gray-100 cursor-pointer rounded-lg transition-colors"
             onClick={item.onClick}
             >
               <div className="flex items-center gap-3">
@@ -150,7 +155,7 @@ export const ContentView: React.FC = () => {
                 <div>
                 <div className="font-medium text-gray-900 text-sm">{item.title}</div>
                 {item.subtitle && (
-                <div className="text-xs text-gray-500">{item.subtitle}</div>
+                <div className="text-[13px] text-gray-500">{item.subtitle}</div>
                 )}
                 </div>
               </div>

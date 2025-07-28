@@ -15,19 +15,27 @@ figma.showUI(__html__, {width:440, height:554});
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
 figma.ui.onmessage = async (msg) => {
-  if (msg.type === 'insert-names') {
+  if (msg.type.startsWith('insert-')) {
     const selectedNodes = figma.currentPage.selection;
-    const names: string[] = msg.names;
-
+    const dataArray: string[] = msg.data || []; // rename from `msg.names` to `msg.data` to make it general
+    let selectedNodesCount = selectedNodes.length;
+    if(selectedNodesCount === 0){
+      figma.closePlugin('No text layer selected');
+      return;
+    }
+  
     let count = 0;
     for (let node of selectedNodes) {
       if (node.type === "TEXT") {
         await figma.loadFontAsync(node.fontName as FontName);
-        node.characters = names[count % names.length];
+        node.characters = dataArray[count % dataArray.length];
         count++;
       }
     }
-
-    figma.closePlugin(`Inserted ${count} name(s)`);
+  
+    // Friendly message based on msg.type
+    const insertType = msg.type.replace('insert-', '').replace(/([A-Z])/g, ' $1').toLowerCase();
+    figma.closePlugin(`Inserted ${count} ${insertType}(s)`);
   }
+  
 };
