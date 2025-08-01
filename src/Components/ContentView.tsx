@@ -17,7 +17,12 @@ export const ContentView: React.FC = () => {
       hasChevron: false,
       onClick: () => {
         console.log("Avatar clicked");
-        // add your Avatar logic here
+        parent.postMessage({ 
+          pluginMessage: { 
+            type: 'avatar' 
+          } 
+        }, '*');
+
       },
     },
     {

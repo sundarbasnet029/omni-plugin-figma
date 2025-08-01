@@ -16,7 +16,11 @@
       "https://api.unsplash.com",
       "https://images.unsplash.com",
       "https://fonts.googleapis.com",
-      "https://fonts.gstatic.com"
+      "https://fonts.gstatic.com",
+      "https://avatars.dicebear.com",
+      "https://api.dicebear.com"
+
+
     ]
   }
 }
