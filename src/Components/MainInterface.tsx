@@ -74,7 +74,7 @@ const MainInterface: React.FC = () => {
       <TabBar activeTab={activeTab} onTabChange={handleTabChange} />
       
       {/* Render the appropriate view based on active tab */}
-      {activeTab === 'icons' && <IconsView />}
+      {activeTab === 'icons' && <IconsView/>}
       {activeTab === 'image' && (
         <ImagesView 
           images={imagesArray} 

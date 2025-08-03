@@ -43,15 +43,110 @@ figma.ui.onmessage = async (msg) => {
     console.log("Inserting avatar");
     insertRandomAvatar();
   }
+
+  // Add this new handler for icons
+  if (msg.type === 'icon') {
+    await insertIcon(msg.iconData);
+  }
 };
 
-
+// Function to insert SVG icon
+async function insertIcon(iconData: { svg: string, name?: string, collection?: string, iconName?: string }) {
+  const selection = figma.currentPage.selection;
+  
+  try {
+    // Parse the SVG string to create a node
+    function normalizeSvgSize(svg: string): string {
+      return svg
+        .replace(/width="[^"]+"/, 'width="24"')
+        .replace(/height="[^"]+"/, 'height="24"');
+    }
+    const svg = normalizeSvgSize(iconData.svg);
+    const svgNode = figma.createNodeFromSvg(svg);
+    
+    if (selection.length === 0) {
+      // If no selection, place the icon at the center of the viewport
+      svgNode.x = figma.viewport.center.x - svgNode.width;
+      svgNode.y = figma.viewport.center.y - svgNode.height;
+      
+      // Add the icon to the current page
+      figma.currentPage.appendChild(svgNode);
+      
+      // Select the newly created icon
+      figma.currentPage.selection = [svgNode];
+      
+      // Zoom into view
+      figma.viewport.scrollAndZoomIntoView([svgNode]);
+      
+      figma.notify(`Inserted icon${iconData.name ? ': ' + iconData.name : ''}`);
+    } else {
+      // If there's a selection, replace or insert into selected elements
+      let insertedCount = 0;
+      
+      for (const node of selection) {
+        if (node.type === 'FRAME' || node.type === 'GROUP') {
+          // Insert icon into frame/group
+          const iconCopy = svgNode.clone();
+          
+          // Center the icon within the frame/group
+          iconCopy.x = (node.width - iconCopy.width) / 2;
+          iconCopy.y = (node.height - iconCopy.height) / 2;
+          
+          node.appendChild(iconCopy);
+          insertedCount++;
+        } else if (node.type === 'RECTANGLE' || node.type === 'ELLIPSE' || node.type === 'POLYGON' || node.type === 'STAR' || node.type === 'VECTOR') {
+          // Replace the selected shape with the icon
+          const iconCopy = svgNode.clone();
+          
+          // Match the position and size of the original node
+          iconCopy.x = node.x;
+          iconCopy.y = node.y;
+          
+          // Optionally resize to match the original node's dimensions
+          if (node.width && node.height) {
+            const scaleX = node.width / iconCopy.width;
+            const scaleY = node.height / iconCopy.height;
+            const scale = Math.min(scaleX, scaleY); // Maintain aspect ratio
+            
+            iconCopy.resize(iconCopy.width * scale, iconCopy.height * scale);
+            
+            // Center within the original bounds
+            iconCopy.x = node.x + (node.width - iconCopy.width) / 2;
+            iconCopy.y = node.y + (node.height - iconCopy.height) / 2;
+          }
+          
+          // Insert the icon in the same parent and position
+          if (node.parent) {
+            const index = node.parent.children.indexOf(node);
+            node.parent.insertChild(index, iconCopy);
+          }
+          
+          // Remove the original node
+          node.remove();
+          insertedCount++;
+        }
+      }
+      
+      // Remove the original SVG node if we cloned it
+      if (insertedCount > 0) {
+        svgNode.remove();
+      }
+      
+      figma.notify(`Inserted icon${iconData.name ? ' ' + iconData.name : ''} into ${insertedCount} element(s)`);
+    }
+  } catch (error) {
+    figma.notify('Failed to insert icon. Invalid SVG format.', { error: true });
+    console.error('Failed to insert icon:', error);
+  }
+}
 
 async function insertRandomAvatar() {
   const selection = figma.currentPage.selection;
   
   if (selection.length === 0) {
     figma.ui.postMessage({ type: 'error', message: 'Please select an element' });
+      figma.closePlugin('No text layer selected');
+    
     return;
   }
 
@@ -92,10 +187,18 @@ async function insertRandomAvatar() {
   }
 }
 
+const CLOUDINARY_AVATARS = [
+  'https://res.cloudinary.com/dssyqusif/image/upload/v1753893975/Rectangle-4_evjzzc.jpg',
+  'https://res.cloudinary.com/dssyqusif/image/upload/v1753893975/Rectangle-2_dhvciq.jpg',
+  'https://res.cloudinary.com/dssyqusif/image/upload/v1753893975/Rectangle-3_vhpsym.jpg',
+  // ... add all 25 avatar URLs
+  'https://res.cloudinary.com/dssyqusif/image/upload/v1753893975/Rectangle-1_nayq4f.jpg',
+  'https://res.cloudinary.com/dssyqusif/image/upload/v1753893975/Rectangle_ru9eri.jpg'
+];
+
 function generateRandomAvatarUrl(): string {
-  //const seed = Math.random().toString(36).substring(7);
-  // Using DiceBear API for consistent avatar generation
-  return `https://api.dicebear.com/9.x/lorelei/png`;
+  const randomIndex = Math.floor(Math.random() * CLOUDINARY_AVATARS.length);
+  return CLOUDINARY_AVATARS[randomIndex];
 }
 
 async function fetchImageAsBytes(url: string): Promise<Uint8Array> {
