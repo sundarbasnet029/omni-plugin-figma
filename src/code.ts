@@ -145,7 +145,7 @@ async function insertRandomAvatar() {
   
   if (selection.length === 0) {
     figma.ui.postMessage({ type: 'error', message: 'Please select an element' });
-      figma.closePlugin('No text layer selected');
+      figma.closePlugin('No layer selected');
     
     return;
   }

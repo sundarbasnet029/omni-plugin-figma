@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, ChevronDown } from 'lucide-react';
 
 interface IconData {
@@ -28,11 +28,25 @@ export const IconsView: React.FC = () => {
   const iconLibraries: IconLibrary[] = [
     { id: 'lucide', name: 'lucide', displayName: 'Lucide' },
     { id: 'material-symbols', name: 'material-symbols', displayName: 'Material Symbols' },
-    { id: 'mdi', name: 'mdi', displayName: 'Material Design Icons' },
-    { id: 'heroicons', name: 'heroicons', displayName: 'Heroicons' },
+    { id: 'heroicons', name: 'heroicons', displayName: 'Hero Icons' },
     { id: 'tabler', name: 'tabler', displayName: 'Tabler Icons' },
-    { id: 'phosphor', name: 'phosphor', displayName: 'Phosphor Icons' }
+    { id: 'ph', name: 'phosphor', displayName: 'Phosphor Icons' },
+    { id: 'hugeicons', name: 'huge-icons', displayName: 'Huge Icons' },
   ];
+
+  const selectRef = useRef<HTMLSelectElement | null>(null);
+const hiddenSpanRef = useRef<HTMLSpanElement | null>(null);
+
+// Resize select width based on selected option text
+useEffect(() => {
+  if (selectRef.current && hiddenSpanRef.current) {
+    const selectedText = iconLibraries.find(lib => lib.id === selectedLibrary)?.displayName || '';
+    hiddenSpanRef.current.textContent = selectedText;
+
+    const width = hiddenSpanRef.current.offsetWidth;
+    selectRef.current.style.width = `${width + 24}px`; // +32 for padding & dropdown icon
+  }
+}, [selectedLibrary]);
 
   // Fetch icons from Iconify API
   const fetchIcons = async (collection: string) => {
@@ -267,20 +281,29 @@ export const IconsView: React.FC = () => {
         </div>
         
         {/* Library Dropdown */}
-        <div className="relative flex gap-[10px] p-3 items-center justify-end">
-          <select 
-            value={selectedLibrary}
-            onChange={(e) => setSelectedLibrary(e.target.value)}
-            className="px-3 py-2.5 border-0 text-sm focus:outline-none bg-transparent text-gray-700 appearance-none cursor-pointer pr-4 "
-          >
-            {iconLibraries.map((library) => (
-              <option key={library.id} value={library.id}>
-                {library.displayName}
-              </option>
-            ))}
-          </select>
-          <ChevronDown size={16} className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 pointer-events-none" />
-        </div>
+<div className="relative flex items-center pr-3">
+  {/* Invisible text span to calculate width */}
+  <span
+    ref={hiddenSpanRef}
+    className="absolute left-0 top-0 opacity-0 whitespace-nowrap text-sm font-normal px-3"
+    aria-hidden="true"
+  />
+
+  <select
+    ref={selectRef}
+    value={selectedLibrary}
+    onChange={(e) => setSelectedLibrary(e.target.value)}
+    className="text-sm appearance-none bg-transparent pr-4 pl-3 py-2.5 text-gray-700  rounded-md focus:outline-none cursor-pointer transition-all"
+  >
+    {iconLibraries.map((library) => (
+      <option key={library.id} value={library.id}>
+        {library.displayName}
+      </option>
+    ))}
+  </select>
+
+  <ChevronDown size={16} className="absolute right-4 pointer-events-none text-gray-600" />
+</div>
       </div>
 
       {/* Icons Grid */}
